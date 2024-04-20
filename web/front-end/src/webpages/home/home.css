@@ -1,0 +1,38 @@
+@font-face {
+  font-family: "Barabara";
+  src: url("./BARABARA.otf") format("opentype");
+}
+
+.background-container {
+  background-image: url("./home.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+}
+
+.header img {
+  width: 53%;
+}
+
+.buttons5 {
+  display: flex;
+  justify-content: center;
+}
+
+.buttons5 button {
+  background-color: #1b5b8d;
+  color: white;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 30px;
+  font-family: "Barabara", sans-serif;
+  text-decoration: none;
+}

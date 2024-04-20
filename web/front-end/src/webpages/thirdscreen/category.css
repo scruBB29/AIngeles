@@ -1,0 +1,176 @@
+@import '~leaflet/dist/leaflet.css';
+
+
+.background-container2 {
+  background-image: url("./secback.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+}
+
+.logo {
+  width: 10%;
+}
+
+.header2 {
+  display: flex;
+  justify-content: left;
+}
+
+.header2 img {
+  width: 13%;
+}
+
+.interest-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+
+.interest-button {
+  background-color: #d4d4c1;
+  margin-top: 23px;
+  color: white;
+  padding: 15px 35px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 25px;
+  text-decoration: none;
+}
+
+.interest-button.selected {
+  background-color: #00a643;
+  color: #fff;
+}
+
+.container {
+  display: flex;
+}
+
+.left-column {
+  width: 350px;
+  height: 10%;
+  display: flex;
+  padding: 20px 60px;
+  background-color: transparent;
+  backdrop-filter: blur(8px);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  margin-left: 10%;
+}
+
+.right-column {
+  display: block;
+  padding: 20px 60px;
+  background-color: transparent;
+  backdrop-filter: blur(8px);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  margin-left: 5%;
+  width: 40%;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1.6rem;
+  font-family: "Barabara", sans-serif;
+  color: #414141;
+}
+
+input[type="number"] {
+  padding: 5px 10px;
+  width: 325px;
+}
+
+input[type="checkbox"] {
+  padding: 10px 10px;
+}
+
+.button6 {
+  display: flex;
+  padding: 10px 20px;
+  background-color: #1b5b8d;
+  border-radius: 30px;
+  font-size: 25px;
+  cursor: pointer;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  margin-left: 18%;
+  margin-top: 5%;
+}
+
+.button6:hover {
+  background-color: #1b5b8d;
+}
+
+.head1 {
+  display: flex;
+}
+
+.head1 h2 {
+  width: 200%;
+  font-family: "Barabara", sans-serif;
+  color: #414141;
+}
+
+.container5 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container5 p {
+  margin: 0;
+  width: 100%;
+  display: flex;
+  white-space: pre-wrap;
+}
+
+.loading {
+  font-style: italic;
+  color: #888;
+}
+
+.legend {
+  text-align: center;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 400px;
+  margin-top: 20px;
+}
+
+.leaflet-popup-content-wrapper {
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+}
+
+.leaflet-popup-content {
+  padding: 10px;
+}
+
+table {
+  border: 2px solid forestgreen;
+  width: 100%;
+  height: 200px;
+}
+
+th {
+  border-bottom: 1px solid black;
+}
+
+td {
+  text-align: center;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+}
