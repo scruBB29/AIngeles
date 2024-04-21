@@ -3,9 +3,62 @@ import axios from "axios";
 import Logo from "./Logo.png";
 import "./category.css";
 import FormattedText from "./formating";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { latLngBounds } from "leaflet";
-import { redIcon } from "./leaflet";
+import { redIcon, greenIcon } from "./leaflet";
+import "leaflet-routing-machine";
+import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
+import L from "leaflet";
+
+function MapComponent({ currentLocation, locations, selectedLocation }) {
+  const map = useMap();
+  const routingControlRef = useRef(null);
+
+  useEffect(() => {
+    if (routingControlRef.current) {
+      map.removeControl(routingControlRef.current);
+    }
+
+    if (currentLocation && locations.length > 0 && selectedLocation !== null) {
+      const waypoints = [
+        L.latLng(currentLocation.lat, currentLocation.lng),
+        L.latLng(locations[selectedLocation].coordinates[0], locations[selectedLocation].coordinates[1])
+      ];
+
+      // Remove previous routing line if it exists
+      if (routingControlRef.current) {
+        map.removeControl(routingControlRef.current);
+      }
+
+      // Create new routing line
+      const routingControl = L.Routing.control({
+        waypoints: waypoints,
+        router: new L.Routing.osrmv1({
+          serviceUrl: "http://router.project-osrm.org/route/v1",
+        }),
+        routeWhileDragging: true, // Enable route update while dragging
+        draggableWaypoints: false, // Disable waypoint dragging
+        addWaypoints: false, // Disable adding new waypoints
+        fitSelectedRoutes: 'smart', // Fit the map bounds to the selected route
+        lineOptions: {
+          styles: [{ color: 'blue', opacity: 0.6, weight: 4 }]
+        },
+        createMarker: function(i, waypoint, n) {
+          return L.marker(waypoint.latLng, {
+            draggable: false, // Make the marker non-draggable
+            icon: new L.DivIcon({ className: 'routing-icon', iconSize: [10, 10] }),
+            zIndexOffset: 1000 + i * n
+          });
+        }
+      }).addTo(map);
+
+      // Store reference to the new routing control
+      routingControlRef.current = routingControl;
+    }
+  }, [currentLocation, locations, map, selectedLocation]);
+
+  return null;
+}
 
 function App() {
   const [days, setDays] = useState("");
@@ -19,7 +72,25 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [locations, setLocations] = useState([]);
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const mapRef = useRef(null);
+
+  useEffect(() => {
+    // Get user's current location
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setCurrentLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+      },
+      (error) => {
+        console.error("Error getting current location:", error);
+        setErrorMessage("Error getting current location");
+      }
+    );
+  }, []);
 
   useEffect(() => {
     if (generatedResponse) {
@@ -59,14 +130,19 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
+    // Check if the number of days is valid
+    if (!days || (days < 1 || days > 14)) {
+      setErrorMessage("Please enter a valid number of days (1-14).");
+      setLoading(false);
+      return;
+    }
+  
     const selectedActivities = Object.entries(activities)
       .filter(([_, selected]) => selected)
-      .map(([activity, _]) => activity)
-      .join(", ");
-
-    const prompt = `Plan vacation for ${days} days within Angeles City only in table form  (use this format| Day | Location (with the accurate coordinates) | Activity |). Activities: ${selectedActivities} (be accurate and depends on the day inputted)`;
-
+      .map(([activity, _]) => activity);
+  
+    const prompt = `Plan vacation for ${days} days within Angeles City only in table form  (use this format| Day | Location (with the accurate coordinate) | Activity |). Activities: ${selectedActivities.join(", ")} (be accurate and give only ${days} location)`;
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/api/v1/chats/create/",
@@ -93,6 +169,10 @@ function App() {
       ...prevActivities,
       [activity]: !prevActivities[activity],
     }));
+  };
+
+  const handleMarkerClick = (index) => {
+    setSelectedLocation(index);
   };
 
   return (
@@ -154,19 +234,22 @@ function App() {
                 </p>
               </div>
               {}
-              {generatedResponse && (
+              {generatedResponse && currentLocation && (
                 <div className="leaflet-container">
-                  <MapContainer ref={mapRef} center={[51.505, -0.09]} zoom={3}>
+                  <MapContainer ref={mapRef} center={currentLocation} zoom={8}>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     {locations.map((location, index) => (
-                      <Marker
-                        key={index}
-                        position={location.coordinates}
-                        icon={redIcon}
-                      >
-                        <Popup>{location.name}</Popup>
+                      <Marker key={index} position={location.coordinates} icon={redIcon} eventHandlers={{click: () => handleMarkerClick(index)}}>
+                        <Popup >{location.name}</Popup>
                       </Marker>
                     ))}
+                    {/* Current location marker */}
+                    {currentLocation && (
+                      <Marker position={currentLocation} icon={greenIcon}>
+                        <Popup autoOpen={true}><b>Your current location</b></Popup>
+                      </Marker>
+                    )}
+                    <MapComponent currentLocation={currentLocation} locations={locations} selectedLocation={selectedLocation} />
                   </MapContainer>
                 </div>
               )}

@@ -41,6 +41,8 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
+
+
 ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
